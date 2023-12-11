@@ -1,52 +1,35 @@
 /** @format */
 
-class MarketPlace {
-  constructor() {
-    this.courses = [];
-  }
+let username = '';
+const courses = []; // Array di oggetti con { id, srcImg, title, description, categories, author dove author corrisponde allo username loggato }
 
-  // Aggiungi un corso
-  addCourse(title, description, tag, img, files, author) {
-    this.courses.push({
-      id: Math.random().toString(16).slice(2) + Date.now().toString(16),
-      title,
-      description,
-      tag,
-      img,
-      author,
-      files,
-    });
-  }
-
-  // Visualizza i dati di tutti i corsi nel marketplace
-  viewCourses() {
-    return this.courses;
-  }
-
-  // Modifica i dati di uno studente
-  updateCourse(id, ...data) {
-    const course = this.courses.find(s => s.id === id);
-
-    if (data) {
-      console.log('spread operator: ' + data);
-    }
-  }
-
-  // Rimuovi uno studente dal registro
-  removeCourse(id) {
-    this.courses = this.courses.filter(s => !(s.id === id));
-  }
+function createCourse({ title, description, srcImage, categories }) {
+  courses.push({
+    id: courses.length + 1,
+    title,
+    description,
+    author: username,
+    srcImage,
+    categories,
+  });
 }
 
-// Esempio di utilizzo della classe
-const registro = new RegistroClasse();
+function editCourse({ id, title, description, srcImage, categories }) {}
 
-registro.aggiungiStudente('Mario', 'Rossi');
-registro.aggiungiVoto('Mario', 'Rossi', 8, 'Math', '2023-01-10');
-console.log(registro.visualizzaStudenti()); // Restituisce tutti gli studenti nel registro
+function deleteCourse(id) {}
 
-registro.modificaStudente('Mario', 'Rossi', 'Luigi', 'Verdi');
-console.log(registro.visualizzaStudenti()); // Restituisce tutti gli studenti nel registro dopo la modifica
+function detailCourse(id) {}
 
-registro.rimuoviStudente('Luigi', 'Verdi');
-console.log(registro.visualizzaStudenti()); // Restituisce tutti gli studenti nel registro dopo la rimozione
+function getCoursesByCategory(category) {}
+
+function getCategories() {}
+
+const course = {
+  title: 'HTML for beginner',
+  description: 'Corso per principianti',
+  srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
+  categories: 'Programmazione',
+};
+createCourse(course);
+
+console.log(courses);
