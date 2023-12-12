@@ -68,16 +68,8 @@ const course3 = {
   srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
   categories: ['Ciaone', 'Programmazione'],
 };
+//funzione che si occupa del login, nasconde il login e mostra logout e add
 function showAdditionalButton() {
-  /* Crea un nuovo elemento pulsante
-  var additionalButton = document.createElement('button');
-  additionalButton.className = 'btn btn-outline-primary my-2 my-sm-0';
-  additionalButton.type = 'button';
-  additionalButton.textContent = 'Nuovo Pulsante';
-
-  // Inserisci il nuovo pulsante prima del form nel DOM
-  var form = document.getElementById('loginForm');
-  form.parentNode.insertBefore(additionalButton, form);*/
   const addButton = document.getElementById('addButton');
   const logoutButton = document.getElementById('logoutButton');
   const loginButton = document.getElementById('loginButton');
@@ -86,65 +78,145 @@ function showAdditionalButton() {
   loginButton.style.display = 'none';
   logoutButton.style.display = 'block';
   inputForm.setAttribute('readonly', 'true');
+  populateHome();
 }
 
+//funzione chiamata onsubmit form add
 function addCourse(event) {
   event.preventDefault();
   const saveButton = document.getElementById('saveButton');
-  //saveButton.setAttribute('data-dismiss', 'modal');
-  // Ottieni i valori dai campi di input e text area
   var title = document.getElementById('fTitle').value;
   var description = document.getElementById('fDescription').value;
   var srcImage = document.getElementById('fSrcImage').value;
   var categories = document.getElementById('fCategories').value;
-
-  // Aggiungi qui la logica per utilizzare i valori (ad esempio, aggiungi il corso)
   createCourse({ title: title, description: description, srcImage: srcImage, categories: categories.split(', ') });
   // Azzerare i valori dei campi dopo l'invio del form
   document.getElementById('fTitle').value = '';
   document.getElementById('fDescription').value = '';
   document.getElementById('fSrcImage').value = '';
   document.getElementById('fCategories').value = '';
-
-  // Chiudi la modale
+  // Chiude la modale, jquery
   $('#exampleModal').modal('hide');
+  populateHome();
+}
+
+function populateHome() {
+  // carico elementi home
+  const container = document.querySelector('.container');
+  container.innerHTML = '';
+  let categories = getCategories();
+  let coursesByCategory = '';
+  if (categories.length > 0) {
+    categories.forEach((elem, categoryIndex) => {
+      coursesByCategory = getCoursesByCategory(elem);
+      if (coursesByCategory.length < 3) {
+        container.innerHTML += `<div><h4>${elem}</h4></div>`;
+        let textHTML = `<div class="row">`;
+        coursesByCategory.forEach((course, courseIndex) => {
+          textHTML += `<div class="col-sm-3">
+            <div class="card">
+              <img
+                class="card-img-top"
+                src="${course.srcImage}"
+                alt="IMG Course"
+              />
+              <div class="card-body">
+                <h5 class="card-title">${course.title}</h5>
+                <p class="card-text">${course.description}</p>
+                <button class="btn btn-primary my-2 my-sm-0" type="button" data-toggle="modal" data-target="#myModal${categoryIndex}-${courseIndex}">Details</button>
+              </div>
+            </div>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="myModal${categoryIndex}-${courseIndex}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Course Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="p-content">
+                      <img
+                      class="img-fluid"
+                      src="${course.srcImage}"
+                      alt="IMG Course"
+                      style="max-width: 50%; height: auto;"
+                      />
+                      <p>${course.title}</p>
+                      <p>Description: ${course.description}</p>
+                      <p>Author: ${course.author}</p>
+                      <p>Categories: ${course.categories}</p>
+                      <button type="button" class="btn btn-primary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Edit Course</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="form-content" style="display: none;">
+                      <form id="editForm${categoryIndex}-${courseIndex}">
+                        <div class="form-group">
+                          <label for="editTitle">Title:</label>
+                          <input type="text" class="form-control" id="editTitle" value="${course.title}">
+                        </div>
+                        <div class="form-group">
+                          <label for="editDescription">Description:</label>
+                          <textarea class="form-control" id="editDescription">${course.description}</textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="editSrcImage">Description:</label>
+                          <textarea class="form-control" id="editSrcImage">${course.srcImage}</textarea>
+                        </div>
+                        <div class="form-group">
+                          <label for="editCategories">Description:</label>
+                          <textarea class="form-control" id="editCategories">${course.categories}</textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex})">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Abort</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        });
+        textHTML += `</div>`;
+        container.innerHTML += textHTML;
+      }
+    });
+  }
+}
+
+function toggleView(categoryIndex, courseIndex) {
+  const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
+  const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
+
+  pContent.style.display = pContent.style.display === 'none' ? 'block' : 'none';
+  formContent.style.display = formContent.style.display === 'none' ? 'block' : 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('loginButton').addEventListener('click', function () {
     validateForm();
-    //showAdditionalButton();
   });
 
   function validateForm() {
     var inputField = document.getElementById('inputForm');
     var loginButton = document.getElementById('loginButton');
 
-    // Verifica se il campo di input è vuoto
     if (inputField.value.trim() === '') {
-      // Mostra un alert
       alert('Il campo non può essere vuoto!');
-
-      // Disabilita il pulsante di login
-      //loginButton.disabled = true;
     } else if (inputField.value.length > 10) {
-      // Verifica se il campo di input supera la lunghezza massima consentita
-      // Mostra un alert
       alert('Il campo non può contenere più di 10 caratteri!');
-
-      // Disabilita il pulsante di login
-      //loginButton.disabled = true;
     } else {
-      // Abilita il pulsante di login
-      //loginButton.disabled = false;
-      //alert('apposto');
-      // Invia il modulo manualmente
-      //document.getElementById('loginForm').submit();
       showAdditionalButton();
     }
   }
+
+  populateHome();
 });
-createCourse(course);
+
+//createCourse(course);
 createCourse(course2);
 createCourse(course3);
 //editCourse(1, course);
