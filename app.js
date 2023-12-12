@@ -81,10 +81,69 @@ function showAdditionalButton() {
   const addButton = document.getElementById('addButton');
   const logoutButton = document.getElementById('logoutButton');
   const loginButton = document.getElementById('loginButton');
+  const inputForm = document.getElementById('inputForm');
   addButton.style.display = 'block';
   loginButton.style.display = 'none';
   logoutButton.style.display = 'block';
+  inputForm.setAttribute('readonly', 'true');
 }
+
+function addCourse(event) {
+  event.preventDefault();
+  const saveButton = document.getElementById('saveButton');
+  //saveButton.setAttribute('data-dismiss', 'modal');
+  // Ottieni i valori dai campi di input e text area
+  var title = document.getElementById('fTitle').value;
+  var description = document.getElementById('fDescription').value;
+  var srcImage = document.getElementById('fSrcImage').value;
+  var categories = document.getElementById('fCategories').value;
+
+  // Aggiungi qui la logica per utilizzare i valori (ad esempio, aggiungi il corso)
+  createCourse({ title: title, description: description, srcImage: srcImage, categories: categories.split(', ') });
+  // Azzerare i valori dei campi dopo l'invio del form
+  document.getElementById('fTitle').value = '';
+  document.getElementById('fDescription').value = '';
+  document.getElementById('fSrcImage').value = '';
+  document.getElementById('fCategories').value = '';
+
+  // Chiudi la modale
+  $('#exampleModal').modal('hide');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('loginButton').addEventListener('click', function () {
+    validateForm();
+    //showAdditionalButton();
+  });
+
+  function validateForm() {
+    var inputField = document.getElementById('inputForm');
+    var loginButton = document.getElementById('loginButton');
+
+    // Verifica se il campo di input è vuoto
+    if (inputField.value.trim() === '') {
+      // Mostra un alert
+      alert('Il campo non può essere vuoto!');
+
+      // Disabilita il pulsante di login
+      //loginButton.disabled = true;
+    } else if (inputField.value.length > 10) {
+      // Verifica se il campo di input supera la lunghezza massima consentita
+      // Mostra un alert
+      alert('Il campo non può contenere più di 10 caratteri!');
+
+      // Disabilita il pulsante di login
+      //loginButton.disabled = true;
+    } else {
+      // Abilita il pulsante di login
+      //loginButton.disabled = false;
+      //alert('apposto');
+      // Invia il modulo manualmente
+      //document.getElementById('loginForm').submit();
+      showAdditionalButton();
+    }
+  }
+});
 createCourse(course);
 createCourse(course2);
 createCourse(course3);
