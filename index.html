@@ -5,7 +5,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <script type="text/javascript" src="app.js"></script>
     <title>Document</title>
   </head>
-  <body></body>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+      <a class="navbar-brand">Navbar</a>
+      <form class="form-inline" id="loginForm">
+        <button class="btn btn-outline-success my-2 my-sm-0 mr-2" type="button" style="display: none" id="addButton">
+          Add Course
+        </button>
+        <input class="form-control mr-sm-0" type="text" placeholder="username" />
+        <button
+          class="btn btn-outline-success my-2 my-sm-0"
+          type="button"
+          onclick="showAdditionalButton()"
+          id="loginButton"
+        >
+          Login
+        </button>
+        <button class="btn btn-outline-success my-2 my-sm-0 mr-2" type="submit" style="display: none" id="logoutButton">
+          Logout
+        </button>
+      </form>
+    </nav>
+  </body>
 </html>

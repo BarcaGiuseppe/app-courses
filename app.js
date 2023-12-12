@@ -68,6 +68,23 @@ const course3 = {
   srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
   categories: ['Ciaone', 'Programmazione'],
 };
+function showAdditionalButton() {
+  /* Crea un nuovo elemento pulsante
+  var additionalButton = document.createElement('button');
+  additionalButton.className = 'btn btn-outline-primary my-2 my-sm-0';
+  additionalButton.type = 'button';
+  additionalButton.textContent = 'Nuovo Pulsante';
+
+  // Inserisci il nuovo pulsante prima del form nel DOM
+  var form = document.getElementById('loginForm');
+  form.parentNode.insertBefore(additionalButton, form);*/
+  const addButton = document.getElementById('addButton');
+  const logoutButton = document.getElementById('logoutButton');
+  const loginButton = document.getElementById('loginButton');
+  addButton.style.display = 'block';
+  loginButton.style.display = 'none';
+  logoutButton.style.display = 'block';
+}
 createCourse(course);
 createCourse(course2);
 createCourse(course3);
