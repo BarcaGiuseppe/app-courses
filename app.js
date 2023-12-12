@@ -144,11 +144,12 @@ function populateHome() {
                       src="${course.srcImage}"
                       alt="IMG Course"
                       style="max-width: 50%; height: auto;"
+                      id="course-srcimage"
                       />
-                      <p>${course.title}</p>
-                      <p>Description: ${course.description}</p>
+                      <p id="course-title">${course.title}</p>
+                      <p id="course-description">Description: ${course.description}</p>
                       <p>Author: ${course.author}</p>
-                      <p>Categories: ${course.categories}</p>
+                      <p id="course-categories">Categories: ${course.categories.toString().replace(',', ', ')}</p>
                       <button type="button" class="btn btn-primary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Edit Course</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
@@ -163,14 +164,18 @@ function populateHome() {
                           <textarea class="form-control" id="editDescription">${course.description}</textarea>
                         </div>
                         <div class="form-group">
-                          <label for="editSrcImage">Description:</label>
+                          <label for="editSrcImage">SrcImage:</label>
                           <textarea class="form-control" id="editSrcImage">${course.srcImage}</textarea>
                         </div>
                         <div class="form-group">
-                          <label for="editCategories">Description:</label>
-                          <textarea class="form-control" id="editCategories">${course.categories}</textarea>
+                          <label for="editCategories">Categories:</label>
+                          <textarea class="form-control" id="editCategories">${course.categories
+                            .toString()
+                            .replace(',', ', ')}</textarea>
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex})">Save Changes</button>
+                        <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex}, ${
+                          course.id
+                        })" data-dismiss="modal">Save Changes</button>
                         <button type="button" class="btn btn-secondary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Abort</button>
                       </form>
                     </div>
@@ -193,6 +198,43 @@ function toggleView(categoryIndex, courseIndex) {
 
   pContent.style.display = pContent.style.display === 'none' ? 'block' : 'none';
   formContent.style.display = formContent.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveChanges(categoryIndex, courseIndex, id) {
+  const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
+  const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
+
+  const editForm = document.getElementById(`editForm${categoryIndex}-${courseIndex}`);
+  const newTitle = document.getElementById('editTitle').value;
+  const newDescription = document.getElementById('editDescription').value;
+  const newSrcImage = document.getElementById('editSrcImage').value;
+  const newCategories = document.getElementById('editCategories').value.split(', ');
+
+  editCourse({
+    id: id,
+    title: newTitle,
+    description: newDescription,
+    srcImage: newSrcImage,
+    categories: newCategories,
+  });
+  // Esegui l'aggiornamento delle informazioni del corso o qualsiasi altra azione necessaria
+  // Aggiorna l'interfaccia utente o invia una richiesta al server per l'aggiornamento
+
+  // Aggiorna il titolo e la descrizione nella modalità
+  const pTitle = document.getElementById('course-title');
+  const pDescription = document.getElementById('course-description');
+  const pSrcImage = document.getElementById('course-srcimage');
+  const pCategories = document.getElementById('course-categories');
+
+  pTitle.textContent = newTitle;
+  pDescription.textContent = newDescription;
+  pSrcImage.src = newSrcImage;
+  pCategories.textContent = newCategories;
+
+  // Chiudi la modalità
+  //$('#myModal${categoryIndex}-${courseIndex}').modal('hide');
+  //toggleView(categoryIndex, courseIndex);
+  populateHome();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
