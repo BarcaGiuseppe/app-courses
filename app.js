@@ -27,8 +27,9 @@ function editCourse({ id, title, description, srcImage, categories }) {
 
 function deleteCourse(id) {
   courses = courses.filter(course => {
-    !(course.id === id);
+    return !(course.id === id);
   });
+  console.log('eliminato');
 }
 
 function detailCourse(id) {
@@ -51,19 +52,19 @@ function getCategories() {
 }
 
 const course = {
-  title: 'ANGULAR for beginner',
+  title: 'PRIMO',
   description: 'Corso per principianti',
   srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
   categories: ['Programmazione'],
 };
 const course2 = {
-  title: 'ANGULAR for beginner',
+  title: 'SECONDO',
   description: 'Corso per principianti',
   srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
   categories: ['Ciaone', 'Bellaa'],
 };
 const course3 = {
-  title: 'ANGULAR for beginner',
+  title: 'TERZO',
   description: 'Corso per principianti',
   srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
   categories: ['Ciaone', 'Programmazione'],
@@ -74,10 +75,16 @@ function showAdditionalButton() {
   const logoutButton = document.getElementById('logoutButton');
   const loginButton = document.getElementById('loginButton');
   const inputForm = document.getElementById('inputForm');
-  addButton.style.display = 'block';
-  loginButton.style.display = 'none';
-  logoutButton.style.display = 'block';
-  inputForm.setAttribute('readonly', 'true');
+  addButton.style.display = addButton.style.display === 'none' ? 'block' : 'none';
+  loginButton.style.display = loginButton.style.display === 'none' ? 'block' : 'none';
+  logoutButton.style.display = logoutButton.style.display === 'block' ? 'none' : 'block';
+  if (addButton.style.display === 'block') {
+    inputForm.setAttribute('readonly', 'true');
+    username = inputForm.value;
+  } else {
+    inputForm.removeAttribute('readonly');
+    username = '';
+  }
   populateHome();
 }
 
@@ -109,11 +116,10 @@ function populateHome() {
   if (categories.length > 0) {
     categories.forEach((elem, categoryIndex) => {
       coursesByCategory = getCoursesByCategory(elem);
-      if (coursesByCategory.length < 3) {
-        container.innerHTML += `<div><h4>${elem}</h4></div>`;
-        let textHTML = `<div class="row">`;
-        coursesByCategory.forEach((course, courseIndex) => {
-          textHTML += `<div class="col-sm-3">
+      container.innerHTML += `<div><h4>${elem}</h4></div>`;
+      let textHTML = `<div class="row">`;
+      coursesByCategory.forEach((course, courseIndex) => {
+        textHTML += `<div class="col-sm-3">
             <div class="card">
               <img
                 class="card-img-top"
@@ -125,9 +131,9 @@ function populateHome() {
                 <p class="card-text">${course.description}</p>
                 <button class="btn btn-primary my-2 my-sm-0" type="button" data-toggle="modal" data-target="#myModal${categoryIndex}-${courseIndex}">Details</button>
               </div>
-            </div>
-            
-            <!-- Modal -->
+            </div>`;
+        if (course.author === username) {
+          textHTML += `<!-- Modal -->
             <div class="modal fade" id="myModal${categoryIndex}-${courseIndex}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -151,6 +157,9 @@ function populateHome() {
                       <p>Author: ${course.author}</p>
                       <p id="course-categories">Categories: ${course.categories.toString().replace(',', ', ')}</p>
                       <button type="button" class="btn btn-primary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Edit Course</button>
+                      <button type="button" class="btn btn-danger" onclick="deleteC(${
+                        course.id
+                      })" data-dismiss="modal">Delete</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                     <div class="form-content" style="display: none;">
@@ -184,14 +193,50 @@ function populateHome() {
               </div>
             </div>
           </div>`;
-        });
-        textHTML += `</div>`;
-        container.innerHTML += textHTML;
-      }
+        } else {
+          textHTML += `<!-- Modal -->
+            <div class="modal fade" id="myModal${categoryIndex}-${courseIndex}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Course Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="p-content">
+                      <img
+                      class="img-fluid"
+                      src="${course.srcImage}"
+                      alt="IMG Course"
+                      style="max-width: 50%; height: auto;"
+                      id="course-srcimage"
+                      />
+                      <p id="course-title">${course.title}</p>
+                      <p id="course-description">Description: ${course.description}</p>
+                      <p>Author: ${course.author}</p>
+                      <p id="course-categories">Categories: ${course.categories.toString().replace(',', ', ')}</p>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        }
+      });
+      textHTML += `</div>`;
+      container.innerHTML += textHTML;
     });
   }
 }
 
+function deleteC(id) {
+  console.log(id);
+  deleteCourse(id);
+  populateHome();
+}
 function toggleView(categoryIndex, courseIndex) {
   const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
   const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
@@ -254,13 +299,16 @@ document.addEventListener('DOMContentLoaded', function () {
       showAdditionalButton();
     }
   }
+  document.getElementById('logoutButton').addEventListener('click', function () {
+    showAdditionalButton();
+  });
 
   populateHome();
 });
 
 //createCourse(course);
-createCourse(course2);
-createCourse(course3);
+//createCourse(course2);
+//createCourse(course3);
 //editCourse(1, course);
 //deleteCourse(1);
 //console.log(getCategories());
