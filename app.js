@@ -11,7 +11,7 @@ function createCourse({ title, description, srcImage, categories }) {
     srcImage,
     categories,
   });
-  localStorage.setItem('course', JSON.stringify(courses));
+  localStorage.setItem('courses', JSON.stringify(courses));
 }
 
 function editCourse({ id, title, description, srcImage, categories }) {
@@ -24,7 +24,7 @@ function editCourse({ id, title, description, srcImage, categories }) {
     }
   });
   console.log('aggiornato');
-  localStorage.setItem('course', JSON.stringify(courses));
+  localStorage.setItem('courses', JSON.stringify(courses));
 }
 
 function deleteCourse(id) {
@@ -32,7 +32,7 @@ function deleteCourse(id) {
     return !(course.id === id);
   });
   console.log('eliminato');
-  localStorage.setItem('course', JSON.stringify(courses));
+  localStorage.setItem('courses', JSON.stringify(courses));
 }
 
 function detailCourse(id) {
