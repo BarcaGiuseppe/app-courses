@@ -1,8 +1,7 @@
 /** @format */
 
 let username = '';
-let courses = []; // Array di oggetti con { id, srcImg, title, description, categories, author dove author corrisponde allo username loggato }
-
+let courses = JSON.parse(localStorage.getItem('courses')) ? JSON.parse(localStorage.getItem('courses')) : []; // Array di oggetti con { id, srcImg, title, description, categories, author dove author corrisponde allo username loggato }
 function createCourse({ title, description, srcImage, categories }) {
   courses.push({
     id: courses.length + 1,
@@ -12,6 +11,7 @@ function createCourse({ title, description, srcImage, categories }) {
     srcImage,
     categories,
   });
+  localStorage.setItem('course', JSON.stringify(courses));
 }
 
 function editCourse({ id, title, description, srcImage, categories }) {
@@ -24,6 +24,7 @@ function editCourse({ id, title, description, srcImage, categories }) {
     }
   });
   console.log('aggiornato');
+  localStorage.setItem('course', JSON.stringify(courses));
 }
 
 function deleteCourse(id) {
@@ -31,6 +32,7 @@ function deleteCourse(id) {
     return !(course.id === id);
   });
   console.log('eliminato');
+  localStorage.setItem('course', JSON.stringify(courses));
 }
 
 function detailCourse(id) {
@@ -52,24 +54,6 @@ function getCategories() {
   return categories;
 }
 
-const course = {
-  title: 'PRIMO',
-  description: 'Corso per principianti',
-  srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
-  categories: ['Programmazione'],
-};
-const course2 = {
-  title: 'SECONDO',
-  description: 'Corso per principianti',
-  srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
-  categories: ['Ciaone', 'Bellaa'],
-};
-const course3 = {
-  title: 'TERZO',
-  description: 'Corso per principianti',
-  srcImage: 'https://m.media-amazon.com/images/I/71e3s6py2HL._AC_UF1000,1000_QL80_.jpg',
-  categories: ['Ciaone', 'Programmazione'],
-};
 //funzione che si occupa del login, nasconde il login e mostra logout e add
 function showAdditionalButton() {
   const addButton = document.getElementById('addButton');
@@ -260,46 +244,9 @@ function toggleView(id, title, description, srcImage, categories) {
     </div>
   </div>
 </div>`;
-  /*divModalEdit.innerHTML = `<div class="form-content" style="display: none;">
-  <form id="editForm${categoryIndex}-${courseIndex}">
-    <div class="form-group">
-      <label for="editTitle">Title:</label>
-      <input type="text" class="form-control" id="editTitle" value="${course.title}">
-    </div>
-    <div class="form-group">
-      <label for="editDescription">Description:</label>
-      <textarea class="form-control" id="editDescription">${course.description}</textarea>
-    </div>
-    <div class="form-group">
-      <label for="editSrcImage">SrcImage:</label>
-      <textarea class="form-control" id="editSrcImage">${course.srcImage}</textarea>
-    </div>
-    <div class="form-group">
-      <label for="editCategories">Categories:</label>
-      <textarea class="form-control" id="editCategories">${course.categories
-        .toString()
-        .replace(',', ', ')}</textarea>
-    </div>
-    <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex}, ${
-      course.id
-    })" data-dismiss="modal">Save Changes</button>
-    <button type="button" class="btn btn-secondary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Abort</button>
-  </form>
-</div>`;*/
-  //divModalEdit.innerHTML = `<p>${title}</p>`;
-  //alert('cca semuu');
-  //const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
-  //const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
-
-  //pContent.style.display = pContent.style.display === 'none' ? 'block' : 'none';
-  //formContent.style.display = formContent.style.display === 'none' ? 'block' : 'none';
 }
 
 function saveChanges(id) {
-  //const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
-  //const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
-
-  //const editForm = document.getElementById(`editForm${categoryIndex}-${courseIndex}`);
   const newTitle = document.getElementById('editTitle').value;
   const newDescription = document.getElementById('editDescription').value;
   const newSrcImage = document.getElementById('editSrcImage').value;
@@ -312,23 +259,6 @@ function saveChanges(id) {
     srcImage: newSrcImage,
     categories: newCategories,
   });
-  // Esegui l'aggiornamento delle informazioni del corso o qualsiasi altra azione necessaria
-  // Aggiorna l'interfaccia utente o invia una richiesta al server per l'aggiornamento
-
-  // Aggiorna il titolo e la descrizione nella modalità
-  /*const pTitle = document.getElementById('course-title');
-  const pDescription = document.getElementById('course-description');
-  const pSrcImage = document.getElementById('course-srcimage');
-  const pCategories = document.getElementById('course-categories');
-
-  pTitle.textContent = newTitle;
-  pDescription.textContent = newDescription;
-  pSrcImage.src = newSrcImage;
-  pCategories.textContent = newCategories;*/
-
-  // Chiudi la modalità
-  //$('#myModal${categoryIndex}-${courseIndex}').modal('hide');
-  //toggleView(categoryIndex, courseIndex);
   populateHome();
 }
 
@@ -355,14 +285,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
   populateHome();
 });
-
-//createCourse(course);
-//createCourse(course2);
-//createCourse(course3);
-//editCourse(1, course);
-//deleteCourse(1);
-//console.log(getCategories());
-//console.log(getCoursesByCategory('Programmazione'));
-//console.log(detailCourse(1));
-//console.log(courses);
-//console.log(course2.categories.find(elem => elem === 'Ciaone'));
