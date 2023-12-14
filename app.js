@@ -23,6 +23,7 @@ function editCourse({ id, title, description, srcImage, categories }) {
       course.categories = categories;
     }
   });
+  console.log('aggiornato');
 }
 
 function deleteCourse(id) {
@@ -109,7 +110,7 @@ function addCourse(event) {
 
 function populateHome() {
   // carico elementi home
-  const container = document.querySelector('.container');
+  const container = document.querySelector('.divModalDetails');
   container.innerHTML = '';
   let categories = getCategories();
   let coursesByCategory = '';
@@ -119,6 +120,12 @@ function populateHome() {
       container.innerHTML += `<div><h4>${elem}</h4></div>`;
       let textHTML = `<div class="row">`;
       coursesByCategory.forEach((course, courseIndex) => {
+        let obj = {
+          title: course.title,
+          description: course.description,
+          srcImage: course.srcImage,
+          categories: course.categories,
+        };
         textHTML += `<div class="col-sm-3">
             <div class="card">
               <img
@@ -128,13 +135,13 @@ function populateHome() {
               />
               <div class="card-body">
                 <h5 class="card-title">${course.title}</h5>
-                <p class="card-text">${course.description}</p>
-                <button class="btn btn-primary my-2 my-sm-0" type="button" data-toggle="modal" data-target="#myModal${categoryIndex}-${courseIndex}">Details</button>
+                <p class="card-text">${course.description.substring(0, 20) + '...'}</p>
+                <button class="btn btn-primary my-2 my-sm-0" type="button" data-toggle="modal" data-target="#myModalDetail">Details</button>
               </div>
             </div>`;
         if (course.author === username) {
           textHTML += `<!-- Modal -->
-            <div class="modal fade" id="myModal${categoryIndex}-${courseIndex}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="myModalDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -156,37 +163,15 @@ function populateHome() {
                       <p id="course-description">Description: ${course.description}</p>
                       <p>Author: ${course.author}</p>
                       <p id="course-categories">Categories: ${course.categories.toString().replace(',', ', ')}</p>
-                      <button type="button" class="btn btn-primary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Edit Course</button>
+                      <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal" data-target="#myModalUpdate" onclick="toggleView('${
+                        course.id
+                      }','${course.title}', '${course.description}', '${course.srcImage}', '${course.categories
+                        .toString()
+                        .replace(',', ', ')}')">Edit Course</button>
                       <button type="button" class="btn btn-danger" onclick="deleteC(${
                         course.id
                       })" data-dismiss="modal">Delete</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                    <div class="form-content" style="display: none;">
-                      <form id="editForm${categoryIndex}-${courseIndex}">
-                        <div class="form-group">
-                          <label for="editTitle">Title:</label>
-                          <input type="text" class="form-control" id="editTitle" value="${course.title}">
-                        </div>
-                        <div class="form-group">
-                          <label for="editDescription">Description:</label>
-                          <textarea class="form-control" id="editDescription">${course.description}</textarea>
-                        </div>
-                        <div class="form-group">
-                          <label for="editSrcImage">SrcImage:</label>
-                          <textarea class="form-control" id="editSrcImage">${course.srcImage}</textarea>
-                        </div>
-                        <div class="form-group">
-                          <label for="editCategories">Categories:</label>
-                          <textarea class="form-control" id="editCategories">${course.categories
-                            .toString()
-                            .replace(',', ', ')}</textarea>
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex}, ${
-                          course.id
-                        })" data-dismiss="modal">Save Changes</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Abort</button>
-                      </form>
                     </div>
                   </div>
                 </div>
@@ -237,24 +222,89 @@ function deleteC(id) {
   deleteCourse(id);
   populateHome();
 }
-function toggleView(categoryIndex, courseIndex) {
-  const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
-  const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
+function toggleView(id, title, description, srcImage, categories) {
+  const divModalEdit = document.getElementById('divModalEdit');
+  divModalEdit.innerHTML = `<!-- Modal -->
+  <div class="modal fade" id="myModalUpdate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">Course Update</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <form id="editForm">
+        <div class="form-group">
+          <label for="editTitle">Title:</label>
+          <input type="text" class="form-control" id="editTitle" value="${title}">
+        </div>
+        <div class="form-group">
+          <label for="editDescription">Description:</label>
+          <textarea class="form-control" id="editDescription">${description}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="editSrcImage">SrcImage:</label>
+          <textarea class="form-control" id="editSrcImage">${srcImage}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="editCategories">Categories:</label>
+          <textarea class="form-control" id="editCategories">${categories}</textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="saveChanges(${id})" data-dismiss="modal">Save Changes</button>
+        <button type="button" class="btn btn-secondary"  data-dismiss="modal">Abort</button>
+      </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+  /*divModalEdit.innerHTML = `<div class="form-content" style="display: none;">
+  <form id="editForm${categoryIndex}-${courseIndex}">
+    <div class="form-group">
+      <label for="editTitle">Title:</label>
+      <input type="text" class="form-control" id="editTitle" value="${course.title}">
+    </div>
+    <div class="form-group">
+      <label for="editDescription">Description:</label>
+      <textarea class="form-control" id="editDescription">${course.description}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="editSrcImage">SrcImage:</label>
+      <textarea class="form-control" id="editSrcImage">${course.srcImage}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="editCategories">Categories:</label>
+      <textarea class="form-control" id="editCategories">${course.categories
+        .toString()
+        .replace(',', ', ')}</textarea>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="saveChanges(${categoryIndex}, ${courseIndex}, ${
+      course.id
+    })" data-dismiss="modal">Save Changes</button>
+    <button type="button" class="btn btn-secondary" onclick="toggleView(${categoryIndex}, ${courseIndex})">Abort</button>
+  </form>
+</div>`;*/
+  //divModalEdit.innerHTML = `<p>${title}</p>`;
+  //alert('cca semuu');
+  //const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
+  //const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
 
-  pContent.style.display = pContent.style.display === 'none' ? 'block' : 'none';
-  formContent.style.display = formContent.style.display === 'none' ? 'block' : 'none';
+  //pContent.style.display = pContent.style.display === 'none' ? 'block' : 'none';
+  //formContent.style.display = formContent.style.display === 'none' ? 'block' : 'none';
 }
 
-function saveChanges(categoryIndex, courseIndex, id) {
-  const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
-  const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
+function saveChanges(id) {
+  //const pContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .p-content`);
+  //const formContent = document.querySelector(`#myModal${categoryIndex}-${courseIndex} .form-content`);
 
-  const editForm = document.getElementById(`editForm${categoryIndex}-${courseIndex}`);
+  //const editForm = document.getElementById(`editForm${categoryIndex}-${courseIndex}`);
   const newTitle = document.getElementById('editTitle').value;
   const newDescription = document.getElementById('editDescription').value;
   const newSrcImage = document.getElementById('editSrcImage').value;
   const newCategories = document.getElementById('editCategories').value.split(', ');
-
+  console.log('siamo in saveChanges' + id);
   editCourse({
     id: id,
     title: newTitle,
@@ -266,7 +316,7 @@ function saveChanges(categoryIndex, courseIndex, id) {
   // Aggiorna l'interfaccia utente o invia una richiesta al server per l'aggiornamento
 
   // Aggiorna il titolo e la descrizione nella modalità
-  const pTitle = document.getElementById('course-title');
+  /*const pTitle = document.getElementById('course-title');
   const pDescription = document.getElementById('course-description');
   const pSrcImage = document.getElementById('course-srcimage');
   const pCategories = document.getElementById('course-categories');
@@ -274,7 +324,7 @@ function saveChanges(categoryIndex, courseIndex, id) {
   pTitle.textContent = newTitle;
   pDescription.textContent = newDescription;
   pSrcImage.src = newSrcImage;
-  pCategories.textContent = newCategories;
+  pCategories.textContent = newCategories;*/
 
   // Chiudi la modalità
   //$('#myModal${categoryIndex}-${courseIndex}').modal('hide');
